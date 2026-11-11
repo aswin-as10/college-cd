@@ -3,7 +3,7 @@
 #include <string.h>
 
 int k = 0, z = 0, i = -1, j = 0, c = 0;
-char a[16], ac[20], stk[20], act[10];
+char a[16], stk[20];
 
 void check();
 
@@ -15,7 +15,6 @@ int main()
     scanf("%15s", a);
 
     c = strlen(a);
-    strcpy(act, "SHIFT->");
 
     printf("stack \t input \t action\n");
     printf("$\t%s$\tINITIAL", a);
@@ -30,7 +29,7 @@ int main()
 
             j += 2;
 
-            printf("\n$%s\t%s$\t%sid", stk, a + j, act);
+            printf("\n$%s\t%s$\tSHIFT->id", stk, a + j);
         }
         else
         {
@@ -39,7 +38,7 @@ int main()
 
             j++;
 
-            printf("\n$%s\t%s$\t%ssymbols", stk, a + j, act);
+            printf("\n$%s\t%s$\tSHIFT->symbols", stk, a + j);
         }
 
         check();
@@ -57,8 +56,6 @@ void check()
 {
     int changed = 1;
 
-    strcpy(ac, "REDUCE TO E");
-
     while (changed)
     {
         changed = 0;
@@ -69,7 +66,7 @@ void check()
             i--;
             stk[i+1] = '\0';
 
-            printf("\n$%s\t%s$\t%s", stk, a+j, ac);
+            printf("\n$%s\t%s$\tREDUCE TO E", stk, a+j);
             changed = 1;
         }
 
@@ -80,7 +77,7 @@ void check()
             i -= 2;
             stk[i+1] = '\0';
 
-            printf("\n$%s\t%s$\t%s", stk, a+j, ac);
+            printf("\n$%s\t%s$\tREDUCE TO E", stk, a+j);
             changed = 1;
         }
 
@@ -91,7 +88,7 @@ void check()
             i -= 2;
             stk[i+1] = '\0';
 
-            printf("\n$%s\t%s$\t%s", stk, a+j, ac);
+            printf("\n$%s\t%s$\tREDUCE TO E", stk, a+j);
             changed = 1;
         }
 
@@ -102,11 +99,9 @@ void check()
             i -= 2;
             stk[i+1] = '\0';
 
-            printf("\n$%s\t%s$\t%s", stk, a+j, ac);
+            printf("\n$%s\t%s$\tREDUCE TO E", stk, a+j);
             changed = 1;
         }
     }
 }
-
-
 
