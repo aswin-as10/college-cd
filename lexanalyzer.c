@@ -1,61 +1,88 @@
 
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-int main()
+int isKeyword(char buffer[])
 {
-    char input[100];
-    int i;
+    char keywords[32][10] = {
+        "auto", "break", "case", "char", "const", "continue",
+        "default", "do", "double", "else", "enum", "extern",
+        "float", "for", "goto", "if", "int", "long",
+        "register", "return", "short", "signed", "sizeof",
+        "static", "struct", "switch", "typedef", "union",
+        "unsigned", "void", "volatile", "while"
+    };
 
-    printf("Enter a program (press Ctrl+D to finish):\n");
+    int i, flag = 0;
 
-    while (fgets(input, sizeof(input), stdin) != NULL)
+    for (i = 0; i < 32; i++)
     {
-        i = 0;
-
-        while (input[i] != '\0')
+        if (strcmp(keywords[i], buffer) == 0)
         {
-            if (isalpha(input[i]))
-            {
-                char word[50];
-                int j = 0;
-
-                while (isalnum(input[i]))
-                    word[j++] = input[i++];
-
-                word[j] = '\0';
-
-                if (strcmp(word, "int") == 0 ||
-                    strcmp(word, "float") == 0 ||
-                    strcmp(word, "char") == 0 ||
-                    strcmp(word, "if") == 0 ||
-                    strcmp(word, "else") == 0 ||
-                    strcmp(word, "while") == 0 ||
-                    strcmp(word, "return") == 0)
-                    printf("%s - Keyword\n", word);
-                else
-                    printf("%s - Identifier\n", word);
-            }
-            else if (isdigit(input[i]))
-            {
-                printf("%c - Number\n", input[i]);
-                i++;
-            }
-            else if (strchr("+-*/=%<>", input[i]))
-            {
-                printf("%c - Operator\n", input[i]);
-                i++;
-            }
-            else if (strchr("();{},", input[i]))
-            {
-                printf("%c - Special Symbol\n", input[i]);
-                i++;
-            }
-            else
-                i++;
+            flag = 1;
+            break;
         }
     }
 
+    return flag;
+}
+
+int main()
+{
+    char ch, buffer[15], operators[] = "+-*/%=";
+    char specialch[] = ",;[]{}";
+    char num[] = "1234567890", buf[10];
+
+    FILE *fp;
+    int i, j = 0, k = 0;
+
+    fp = fopen("program.txt", "r");
+
+    if (fp == NULL)
+    {
+        printf("Error while opening the file\n");
+        exit(0);
+    }
+
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        for (i = 0; i < 6; i++)
+            if (ch == operators[i])
+                printf("%c is operator\n", ch);
+
+        for (i = 0; i < 7; i++)
+            if (ch == specialch[i])
+                printf("%c is special character\n", ch);
+
+        if (isalpha(ch))
+            buffer[j++] = ch;
+
+        if (isdigit(ch))
+            buf[k++] = ch;
+
+        else if ((ch == ' ' || ch == '\n' || ch == '\t') && j != 0)
+        {
+            buffer[j] = '\0';
+            j = 0;
+
+            if (isKeyword(buffer))
+                printf("%s is keyword\n", buffer);
+            else
+                printf("%s is identifier\n", buffer);
+        }
+
+        if (!isdigit(ch) && (ch == ' ' || ch == '\n' || ch == '\t') && k != 0)
+        {
+            buf[k] = '\0';
+            k = 0;
+            printf("%s is constant\n", buf);
+        }
+    }
+
+    fclose(fp);
+
     return 0;
 }
+
