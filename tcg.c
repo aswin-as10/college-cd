@@ -2,66 +2,61 @@
 #include <stdio.h>
 #include <string.h>
 
-char op[2], arg1[5], arg2[5], result[5];
+char op[10], arg1[20], arg2[20], result[20];
 
-int main(void)
+int main()
 {
-    FILE *inputFile, *outputFile;
+    FILE *fp1, *fp2;
 
-    inputFile = fopen("input.txt", "r");
-    outputFile = fopen("output.txt", "w");
+    fp1 = fopen("input.txt", "r");
+    fp2 = fopen("output.txt", "w");
 
-    if (inputFile == NULL || outputFile == NULL)
+    if (fp1 == NULL || fp2 == NULL)
     {
-        printf("Error while opening file\n");
-
-        if (inputFile != NULL)
-            fclose(inputFile);
-
-        if (outputFile != NULL)
-            fclose(outputFile);
-
+        printf("File opening error");
         return 1;
     }
 
-    while (fscanf(inputFile, "%1s%4s%4s%4s",
-                  op, arg1, arg2, result) == 4)
+    while (fscanf(fp1, "%s%s%s%s",
+           op, arg1, arg2, result) == 4)
     {
         if (strcmp(op, "+") == 0)
         {
-            fprintf(outputFile,
-                    "MOV R0,%s\nADD R0,%s\nMOV %s,R0\n",
-                    arg1, arg2, result);
+            fprintf(fp2, "\nMOV R0,%s", arg1);
+            fprintf(fp2, "\nADD R0,%s", arg2);
+            fprintf(fp2, "\nMOV %s,R0", result);
         }
-        else if (strcmp(op, "-") == 0)
+
+        if (strcmp(op, "*") == 0)
         {
-            fprintf(outputFile,
-                    "MOV R0,%s\nSUB R0,%s\nMOV %s,R0\n",
-                    arg1, arg2, result);
+            fprintf(fp2, "\nMOV R0,%s", arg1);
+            fprintf(fp2, "\nMUL R0,%s", arg2);
+            fprintf(fp2, "\nMOV %s,R0", result);
         }
-        else if (strcmp(op, "*") == 0)
+
+        if (strcmp(op, "-") == 0)
         {
-            fprintf(outputFile,
-                    "MOV R0,%s\nMUL R0,%s\nMOV %s,R0\n",
-                    arg1, arg2, result);
+            fprintf(fp2, "\nMOV R0,%s", arg1);
+            fprintf(fp2, "\nSUB R0,%s", arg2);
+            fprintf(fp2, "\nMOV %s,R0", result);
         }
-        else if (strcmp(op, "/") == 0)
+
+        if (strcmp(op, "/") == 0)
         {
-            fprintf(outputFile,
-                    "MOV R0,%s\nDIV R0,%s\nMOV %s,R0\n",
-                    arg1, arg2, result);
+            fprintf(fp2, "\nMOV R0,%s", arg1);
+            fprintf(fp2, "\nDIV R0,%s", arg2);
+            fprintf(fp2, "\nMOV %s,R0", result);
+        }
+
+        if (strcmp(op, "=") == 0)
+        {
+            fprintf(fp2, "\nMOV R0,%s", arg1);
+            fprintf(fp2, "\nMOV %s,R0", result);
         }
     }
 
-    fclose(inputFile);
-    fclose(outputFile);
-
-    printf("Target code generated in output.txt\n");
+    fclose(fp1);
+    fclose(fp2);
 
     return 0;
 }
-
-
-
-
-
